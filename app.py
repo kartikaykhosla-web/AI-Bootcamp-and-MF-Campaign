@@ -19,8 +19,8 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
     :root { --ink:#17151f; --violet:#6c45f3; --purple:#9b65f7; --acid:#d9ff52; --mist:#f5f2fb; }
-    html, body, [class*="st-"] { font-family:'DM Sans', sans-serif; }
-    .stApp { background: radial-gradient(circle at 82% 0%, #eee5ff 0, transparent 28%), #fbfafc; color:var(--ink); }
+    html, body { font-family:'DM Sans', sans-serif; }
+    .stApp { font-family:'DM Sans', sans-serif; background: radial-gradient(circle at 82% 0%, #eee5ff 0, transparent 28%), #fbfafc; color:var(--ink); }
     .block-container { max-width:1440px; padding-top:1.4rem; padding-bottom:3rem; }
     h1,h2,h3 { font-family:'Space Grotesk', sans-serif !important; letter-spacing:-.035em; }
     [data-testid="stSidebar"] { background:#17151f; border-right:0; }
