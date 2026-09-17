@@ -90,9 +90,9 @@ PROJECTS = {
 }
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def get_live_bundle(api_url: str, token: str, api_key: str, page_param: str):
-    return load_live_data([api_url], token=token, api_key=api_key, page_param=page_param)
+def get_live_bundle(api_url: str, page_param: str):
+    """Fetch fresh API data on every Streamlit rerun."""
+    return load_live_data([api_url], page_param=page_param)
 
 
 project_name = st.segmented_control(
@@ -113,9 +113,8 @@ with st.sidebar:
     mask_pii = st.toggle("Mask personal details", value=True)
     st.markdown("---")
     if st.button("Refresh data", width="stretch"):
-        st.cache_data.clear()
         st.rerun()
-    st.markdown('<p class="privacy">Each program loads only its own API. Results are cached for five minutes.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="privacy">Each program loads fresh data from its own API on every dashboard rerun.</p>', unsafe_allow_html=True)
 
 
 api_config = load_api_config()
@@ -139,7 +138,7 @@ if not api_url or "api.example.com" in api_url:
     st.stop()
 
 with st.spinner("Syncing registrations…"):
-    bundle = get_live_bundle(api_url, "", "", page_param)
+    bundle = get_live_bundle(api_url, page_param)
 
 df = bundle.records.copy()
 if df.empty:
