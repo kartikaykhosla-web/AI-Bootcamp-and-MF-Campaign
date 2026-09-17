@@ -1,0 +1,6 @@
+# Add the two unauthenticated GET endpoints below.
+ai_bootcamp_api_url = "https://clm-api.jagran.com/api/v1/jnaib/campaign/reports/jagran_next_ai_bootcamp_s2?page=1&length=20"
+mutual_funds_api_url = "https://clm-api.jagran.com/api/v1/jnaib/campaign/reports/mutual_funds_mastery_s1?page=1&length=2"
+
+# Change only if the APIs use a different pagination query parameter.
+page_param = "page"
