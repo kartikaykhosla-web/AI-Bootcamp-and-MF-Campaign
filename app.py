@@ -258,10 +258,13 @@ with st.container(border=True):
     if search:
         searchable = shown.astype(str).agg(" ".join, axis=1)
         shown = shown[searchable.str.contains(search, case=False, na=False)]
+    if "created_at" in shown:
+        shown["created_at"] = pd.to_datetime(shown["created_at"], errors="coerce", utc=True)
+        shown = shown.sort_values("created_at", ascending=True, na_position="last", kind="stable")
     if mask_pii:
         if "email" in shown: shown["email"] = shown["email"].map(lambda x: mask_contact(x, "email"))
         if "phone" in shown: shown["phone"] = shown["phone"].map(lambda x: mask_contact(x, "phone"))
-    table_columns = [c for c in ["full_name", "email", "phone", "age", "college_organisation", "city_name", "state_name", "payment_status", "coupon_code", "payable_amount", "batch_date", "created_at"] if c in shown]
+    table_columns = [c for c in ["full_name", "created_at", "email", "phone", "age", "college_organisation", "city_name", "state_name", "payment_status", "coupon_code", "payable_amount", "batch_date"] if c in shown]
     st.dataframe(
         shown[table_columns],
         hide_index=True,
@@ -271,7 +274,7 @@ with st.container(border=True):
             "city_name": "City", "state_name": "State", "payment_status": "Payment",
             "coupon_code": "Coupon", "batch_date": "Batch",
             "payable_amount": st.column_config.NumberColumn("Paid", format="₹ %.2f"),
-            "created_at": st.column_config.DatetimeColumn("Registered", format="DD MMM, hh:mm a"),
+            "created_at": st.column_config.DatetimeColumn("Registration date (UTC)", format="DD MMM YYYY, hh:mm:ss a"),
         },
         height=430,
     )
