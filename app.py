@@ -196,18 +196,20 @@ with left.container(border=True):
     trend = filtered.dropna(subset=["created_at"]).copy()
     trend["Day"] = trend["created_at"].dt.tz_convert("Asia/Kolkata").dt.floor("D").dt.tz_localize(None)
     trend = trend.groupby(["Day", "payment_status"], as_index=False).size().rename(columns={"size": "Registrations", "payment_status": "Status"})
-    line = (
+    trend["Date"] = trend["Day"].dt.strftime("%d %b")
+    registration_chart = (
         alt.Chart(trend)
-        .mark_area(interpolate="monotone", opacity=.2, line={"strokeWidth": 2.5})
+        .mark_bar(cornerRadiusTopLeft=5, cornerRadiusTopRight=5)
         .encode(
-            x=alt.X("Day:T", title=None, axis=alt.Axis(format="%d %b", labelAngle=0)),
-            y=alt.Y("Registrations:Q", title=None),
+            x=alt.X("Date:N", title=None, sort=alt.SortField(field="Day", order="ascending"), axis=alt.Axis(labelAngle=0)),
+            xOffset=alt.XOffset("Status:N", sort=["success", "failed", "pending"]),
+            y=alt.Y("Registrations:Q", title="Registrations", stack=None, axis=alt.Axis(tickMinStep=1)),
             color=alt.Color("Status:N", scale=alt.Scale(domain=["success", "failed", "pending"], range=["#6c45f3", "#ef6270", "#efb949"]), legend=alt.Legend(orient="top")),
             tooltip=[alt.Tooltip("Day:T", format="%d %b %Y"), "Status:N", "Registrations:Q"],
         )
         .properties(height=280)
     )
-    st.altair_chart(line)
+    st.altair_chart(registration_chart)
 
 with right.container(border=True):
     st.markdown("### Payment health")
