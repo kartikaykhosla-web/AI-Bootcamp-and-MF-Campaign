@@ -1,4 +1,4 @@
-from data_service import extract_records, mask_contact, normalize_records
+from data_service import extract_records, mask_contact, normalize_records, url_with_page
 
 
 def test_extracts_supplied_envelope():
@@ -18,3 +18,8 @@ def test_normalizes_money_status_and_dates():
 def test_masks_contacts():
     assert mask_contact("someone@example.com", "email") == "so***@example.com"
     assert mask_contact("9876543210", "phone") == "******3210"
+
+
+def test_replaces_existing_page_parameter():
+    url = "https://api.example.com/reports?page=1&length=20"
+    assert url_with_page(url, "page", 3) == "https://api.example.com/reports?length=20&page=3"

@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Iterable
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import pandas as pd
 import requests
@@ -37,6 +38,14 @@ def _headers(token: str = "", api_key: str = "") -> dict[str, str]:
     if api_key:
         result["x-api-key"] = api_key
     return result
+
+
+def url_with_page(url: str, page_param: str, page: int) -> str:
+    """Replace an existing page query value instead of adding a duplicate."""
+    parts = urlsplit(url)
+    query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=True) if key != page_param]
+    query.append((page_param, str(page)))
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
 def extract_records(payload: Any) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -80,8 +89,7 @@ def fetch_all_pages(
     while page not in seen_pages and len(seen_pages) < max_pages:
         seen_pages.add(page)
         response = requests.get(
-            url,
-            params={page_param: page},
+            url_with_page(url, page_param, page),
             headers=_headers(token, api_key),
             timeout=timeout,
         )
